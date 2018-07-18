@@ -1,0 +1,176 @@
+using System;
+using System.Collections.Generic;
+
+namespace LR0Parser
+{
+	class MainClass
+	{
+
+		private static Stack<string> stack= new Stack<string>();
+		private static Stack<string> symbol= new Stack<string>();
+		private static Dictionary<string,int> col;
+		private static Dictionary<string,string> reduceTable;
+		private static string[,] parsingTable;
+		private static string[] temp, userInput, data1, data2;
+		private static string[] seperator = {"a", "b", "$"};
+		private static string[] production = { "a", "b", "S" };
+		private static string parsingTableData, userData, index, tempVar;
+		private static int count = 0, increment=0, indexer = 0, num = 0;
+		private static bool isTrue = true;
+
+		public static void Main (string[] args)
+		{
+				userData = Console.ReadLine () + "$";
+				CleanInput ();
+
+				ReduceTable ();
+
+				ColumnIndexing ();
+
+				ParsingTable ();
+
+				parse ();
+		}
+		b
+		public static void parse(){
+			
+			increment = 0;
+			stack.Push ("$");
+			stack.Push ("0");
+			symbol.Push ("");
+
+			while (true) {
+				
+
+				data1 = stack.Peek().Split(',');
+				data2 = symbol.Peek ().Split (',');
+
+				parsingTableData = parsingTable[Convert.ToInt16(data1[data1.Length-1]),col[userInput[increment]]];
+				index = parsingTableData;
+
+				if (parsingTableData == "Accept") {
+					Console.WriteLine (index);
+					break;
+				}
+				else if (parsingTableData == "-1") {
+					Console.WriteLine ("Syntax Error!");
+					break;
+				} 
+
+
+				if (index [0].ToString() == "S") {
+					if (index.Contains ("S")) {
+						tempVar = stack.Peek () + "," + index.Substring (1, index.Length - 1); 
+					}else
+						tempVar = stack.Peek () + "," + index; 
+					
+					stack.Push (tempVar);
+					tempVar = symbol.Peek () + "," + userInput [increment];
+					symbol.Push (tempVar);
+					increment++;
+				} else if (index [0].ToString() == "R") { //RaS
+					tempVar = symbol.Peek () + "," + reduceTable[index.Substring (1, index.Length - 1)];
+					data2 = symbol.Peek ().Split (',');
+
+					tempVar = tempVar.Replace (data2 [data2.Length - 1]+",", "");
+					if (index.Length > 2) { //aS
+						num = (data2.Length) - 1;
+						data2 = symbol.Peek ().Split (',');
+						indexer = (data2.Length) - 1;
+						tempVar =  symbol.Peek ().Replace (",", "");
+						tempVar = reduceTable [tempVar];
+						parsingTableData = parsingTable [Convert.ToInt32 (data1 [data1.Length - 1]), 
+							col [tempVar]];
+						isTrue = false;
+					}
+					symbol.Push (tempVar);
+
+
+					for (int i = 0; i < production.Length; i++) {
+						for (int j = 0; j < index.Length; j++) {
+							if (production [i] == data2 [j]) {
+								stack.Pop ();
+							}
+						}
+					}
+
+
+					if (!isTrue) {
+						data1 = stack.Peek ().Split (',');
+
+						parsingTableData = parsingTable [Convert.ToInt32 (data1 [data1.Length - 1]), 
+							col [data2 [data2.Length - 1]]];
+						stack.Push (stack.Peek () + "," + parsingTableData);
+					}
+
+					//stack.Pop ();
+
+					if (isTrue) {
+						tempVar = stack.Peek ();
+
+						data1 = stack.Peek ().Split (',');
+						data2 = symbol.Peek ().Split (',');
+				
+
+						parsingTableData = parsingTable [Convert.ToInt32 (data1 [data1.Length - 1]), 
+							col [data2 [data2.Length - 1]]];
+						stack.Push (stack.Peek () + "," + parsingTableData);
+					}	
+				//	Console.ReadLine ();
+
+				}
+
+				Console.WriteLine (stack.Peek()+"\t|\t"+symbol.Peek()+"\t|\t"+userInput[increment]);
+				//Console.ReadLine ();
+			}
+
+		}
+
+
+	public static void CleanInput(){
+		for (int i = 0; i < seperator.Length; i++) {
+			userData = 
+				userData.Replace (seperator [i], " " + seperator [i] + " ");
+		}
+
+		temp = userData.Split (' ');
+
+		count = 0;
+		userInput = new string[temp.Length];
+		foreach (var item in temp) {
+			if(item != ""){
+				userInput [count] = item;
+				count++;
+			}
+		}
+	}
+
+	public static string ReduceItem(string data){
+		return reduceTable [data];
+	}
+
+	public static void ReduceTable(){
+		reduceTable = new Dictionary<string, string> {
+			{ "b", "S" }, { "aS", "S" }
+		};
+	}
+
+	public static void ColumnIndexing(){
+		col = new Dictionary<string, int> {
+			{ "a", 0 }, { "b", 1 }, { "$", 2 }, { "S", 3 }
+		};
+	}
+
+	public static void ParsingTable(){
+
+		parsingTable = new string[,] {
+			{"S2", "S3", "-1", "1"},
+			{"-1", "-1", "Accept", "-1"},
+			{"S2", "S3", "-1", "4"},
+			{"Rb", "Rb", "Rb", "Rb"},
+			{"RaS", "RaS", "RaS", "RaS"}
+		};
+
+	}
+}
+}
