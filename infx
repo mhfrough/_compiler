@@ -5,9 +5,18 @@ namespace InfixPostFix
 {
 	class Program
 	{
+		private static string data;
 		static void Main(string[] args)
 		{
-			string data = Console.ReadLine ();
+			while (true) {
+				Console.Write ("Input: ");
+				data = Console.ReadLine ();
+				Parse ();
+				Console.WriteLine ("\n");
+			}
+		}
+
+		static void Parse(){
 			string[] tokens = data.Split(' ');
 
 			Stack<string> s = new Stack<string>();
@@ -47,9 +56,8 @@ namespace InfixPostFix
 			{
 				Console.Write("{0}", result[i]);
 			}
-
-			Console.ReadLine();
 		}
+
 		static int Priority(string c)
 		{
 			if (c == "^")
