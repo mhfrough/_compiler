@@ -1,0 +1,138 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace LL1Parser
+{
+	class MainClass
+	{
+		private static Stack<string> stack = new Stack<string> ();
+		private static Dictionary<string,int> row, col;
+		private static string[] dataG;
+		private static string go;
+
+
+		private static string[] operators = { "(", ")", "+", "*","," };
+
+		public static void Main (string[] args)
+		{
+			
+			string[,] parsingTable = new string[,] {
+				{ "-1", "-1", "TX", "-1", "TX", "null" },
+				{ "+E", "-1", "-1", "null", "-1", "null"  },
+				{ "-1", "-1", "(E)", "-1", "id Y", "null" },
+				{ "null", "*T", "-1", "null", "-1", "null" }
+			};
+			 row = new Dictionary<string, int> {
+				{ "E", 0 }, { "X", 1 }, { "T", 2 }, { "Y", 3 }
+			};
+			 col = new Dictionary<string, int> {
+				{ "+", 0 }, { "*", 1 }, { "(", 2 }, { ")", 3 }, { "id", 4 }, { "$", 5 }
+			};
+
+
+
+			while (true) {
+				bool isOp = false;
+				string userInput = Console.ReadLine ();
+				for (int i = 0; i < operators.Length; i++) {
+					if (userInput [userInput.Length - 1].ToString ().Contains (operators [i])) {
+						isOp = true;
+					}	
+				}
+
+				if (isOp) {
+					userInput = userInput + "$";
+				} else
+					userInput = userInput + " $";
+
+				for (int i = 0; i < operators.Length; i++) {
+					if (userInput.Contains (operators [i]) && i == 0) {
+					
+						userInput = userInput.Replace (operators [i], operators [i] + " ");
+
+					} else {
+						userInput = userInput.Replace (operators [i], " " + operators [i] + " ");
+					}
+
+				}
+
+				dataG = userInput.Split (' ');
+				stack.Push ("$");
+				stack.Push ("E");
+
+				string[] data = new string[dataG.Length];
+
+				int a = 0;
+				foreach (var item in dataG) {
+					if (item != "") {
+						data [a] = item;
+						a++;
+					}
+				}
+
+				int c = 0;
+
+				while (true) {
+					try {
+						go = parsingTable [row [stack.Pop ()], col [data [c]]];
+					} catch (Exception) {
+						Console.WriteLine ("Syntax Error!");
+						break;
+					}
+					pushing (go);
+					if (stack.Peek () == data [c]) {
+						if (stack.Peek () != "$") {
+							stack.Pop ();
+						} else if (stack.Peek () == "$" && data [c] == "$") {
+
+							if (stack.Peek () == "$") {
+								Console.WriteLine ("Accepted");
+								break;
+							} else {
+								Console.WriteLine ("Syntax Error!");
+							}
+							stack.Pop ();
+
+
+						}
+						c++;
+					}
+				}
+				Console.WriteLine ();
+			}
+
+
+		}
+
+		public static void Init(){
+		}
+
+
+		public static void pushing(string s){
+
+			if (s == "null") {
+				
+			} else if (s == "TX") {
+				stack.Push ("X");
+				stack.Push ("T");
+
+			} else if (s == "+E") {
+				stack.Push ("E");
+				stack.Push ("+");
+			} else if (s == "*T") {
+				stack.Push ("T");
+				stack.Push ("*");
+			} else if (s == "id Y") {
+				stack.Push ("Y");
+				stack.Push ("id");
+			} else if (s == "(E)") {
+				stack.Push (")");
+				stack.Push ("E");
+				stack.Push ("(");
+			}
+			else {
+			}
+		
+		}
+	}
+}
