@@ -1,0 +1,83 @@
+using System;
+
+namespace RDP
+{
+	class MainClass
+	{
+
+		public static char lookahead = '0';
+		public static string userData = "";
+		public static int count = 0;
+
+		public static void Main (string[] args)
+		{
+			while (true) {
+
+				userData = Console.ReadLine () + "$";
+				lookahead = userData [count++];
+				S ();
+
+				if(lookahead == '$')
+					Console.WriteLine ("Correct");
+				else
+					Console.WriteLine ("Syntax Error!");
+
+				lookahead = '0'; count = 0;
+				Console.WriteLine ();
+			}
+		}
+
+		public static void S(){
+			A ();
+			X ();
+		}
+		public static void X(){
+			B ();
+			Y ();
+		}
+		public static void Y(){
+			if (lookahead == '2') {
+				match ('2');
+				S_ ();
+			} else if (lookahead == '3') {
+				match ('3');
+				S_ ();
+			} else
+				return;
+		}
+		public static void S_(){
+			if (lookahead == '1') {
+				match ('1');
+				S_ ();
+			} else
+				return;
+		}
+		public static void A(){
+			if (lookahead == '5') {
+				match ('5');
+				A_ ();
+			} else
+				return;
+		}
+		public static void A_(){
+			if (lookahead == '1') {
+				match ('1');
+				A_ ();
+			} else
+				return;
+		}
+		public static void B(){
+			if (lookahead == '6') {
+				match ('6');
+				B ();
+			} else
+				return;
+		}
+
+		private static void match(char c){
+			if (lookahead == c) {
+				lookahead = userData [count++];
+			}
+		}
+	}
+}
