@@ -3,90 +3,94 @@ using System.Collections.Generic;
 
 namespace InfixPostFix
 {
-	class Program
-	{
-		private static string data;
-		static void Main(string[] args)
-		{
-			while (true) {
-				Console.Write ("Input: ");
-				data = Console.ReadLine ();
-				Parse ();
-				Console.WriteLine ("\n");
-			}
-		}
+    class Program
+    {
+        private static string data;
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+                Console.Write("Input: ");
+                data = Console.ReadLine();
+                Parse();
+                Console.WriteLine("\n");
+            }
+        }
 
-		static void Parse(){
-			string[] tokens = data.Split(' ');
+        static bool isOp(string c)
+        {
+            switch (c)
+            {
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                case "^":
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
-			Stack<string> s = new Stack<string>();
-			List<string> result = new List<string>();
-			int n;
-			foreach (string c in tokens)
-			{
-				if(int.TryParse(c.ToString(), out n))
-				{
-					result.Add(c);
-				}
-				if (c == "(")
-				{
-					s.Push(c);
-				}
-				if (c == ")")
-				{
-					while (s.Count != 0 && s.Peek() != "(")
-					{
-						result.Add(s.Pop());
-					}
-					s.Pop();
-				}
-				if (isOp(c) == true)
-				{
-					while(s.Count != 0 && Priority(s.Peek()) >= Priority(c))
-					{
-						result.Add(s.Pop());
-					}
-					s.Push(c);
-				}
-			}
-			while (s.Count != 0){
-				result.Add(s.Pop());
-			}
-			for (int i = 0; i < result.Count; i++)
-			{
-				Console.Write("{0}", result[i]);
-			}
-		}
+        static void Parse()
+        {
+            string[] tokens = data.Split(' ');
 
-		static int Priority(string c)
-		{
-			if (c == "^")
-			{
-				return 3;
-			}
-			else if (c == "*" || c == "/")
-			{
-				return 2;
-			}
-			else if (c == "+" || c == "-")
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		static bool isOp(string c)
-		{
-			if (c == "+" || c == "-" || c == "*" || c == "/" || c == "^")
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+            Stack<string> s = new Stack<string>();
+            List<string> result = new List<string>();
+            int n;
+            foreach (string c in tokens)
+            {
+                if (int.TryParse(c.ToString(), out n))
+                {
+                    result.Add(c);
+                }
+                if (c == "(")
+                {
+                    s.Push(item: c);
+                }
+                if (c == ")")
+                {
+                    while (s.Count != 0 && s.Peek() != "(")
+                    {
+                        result.Add(s.Pop());
+                    }
+                    s.Pop();
+                }
+                if (isOp(c) == true)
+                {
+                    while (s.Count != 0 && Priority(s.Peek()) >= Priority(c))
+                    {
+                        result.Add(s.Pop());
+                    }
+                    s.Push(c);
+                }
+            }
+            while (s.Count != 0)
+            {
+                result.Add(s.Pop());
+            }
+            for (int i = 0; i < result.Count; i++)
+            {
+                Console.Write("{0}", result[i]);
+            }
+        }
+
+        static int Priority(string c)
+        {
+            switch (c)
+            {
+                case "^":
+                    return 3;
+                case "*":
+                case "/":
+                    return 2;
+                case "+":
+                case "-":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+    }
 }
